@@ -23,6 +23,8 @@ use Symfony\CS\Tokenizer\Tokens;
  */
 class BracesFixer extends AbstractFixer
 {
+    const DEFAULT_INDENT = "\t";
+
     private $singleLineWhitespaceOptions = array('whitespaces' => " \t");
 
     /**
@@ -235,7 +237,7 @@ class BracesFixer extends AbstractFixer
                             $whitespace = $nextWhitespace."\n".$indent;
 
                             if (!$nextNonWhitespaceNestToken->equals('}')) {
-                                $whitespace .= '    ';
+                                $whitespace .= static::DEFAULT_INDENT;
                             }
                         }
 
@@ -267,15 +269,15 @@ class BracesFixer extends AbstractFixer
                     || !($nextToken->isWhitespace() && $nextToken->isWhitespace(array('whitespaces' => " \t")))
                     && substr_count($nextToken->getContent(), "\n") === 1 // preserve blank lines
                 ) {
-                    $tokens->ensureWhitespaceAtIndex($startBraceIndex + 1, 0, "\n".$indent.'    ');
+                    $tokens->ensureWhitespaceAtIndex($startBraceIndex + 1, 0, "\n".$indent.static::DEFAULT_INDENT);
                 }
             } else {
                 $nextToken = $tokens[$startBraceIndex + 1];
 
                 if (!$nextToken->isWhitespace()) {
-                    $tokens->ensureWhitespaceAtIndex($startBraceIndex + 1, 0, "\n".$indent.'    ');
+                    $tokens->ensureWhitespaceAtIndex($startBraceIndex + 1, 0, "\n".$indent.static::DEFAULT_INDENT);
                 } else {
-                    $tmpIndent = trim($nextToken->getContent(), " \t").$indent.'    ';
+                    $tmpIndent = trim($nextToken->getContent(), " \t").$indent.static::DEFAULT_INDENT;
 
                     if (!isset($tmpIndent[0]) || "\n" !== $tmpIndent[0]) {
                         $tmpIndent = "\n".$tmpIndent;
